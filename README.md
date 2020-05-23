@@ -1,20 +1,46 @@
-# Minecraft: Pi edition API Python Library
+# [For Python Education] Minecraft: Pi edition API Python Library modified version
 
+This project `mcpi-e` is a fork from `mcpi` project [https://github.com/martinohanlon/mcpi]
 `mcpi` Python library for communicating with [Minecraft: Pi edition](https://minecraft.net/en-us/edition/pi/) and [RaspberryJuice](https://github.com/zhuowei/RaspberryJuice).
+
+I make some change for my students to use in the class lab. 
 
 ## Installation
 
 ### Windows
 
 ```
-pip3 install mcpi
+pip3 install mcpi-e
+```
+
+*Note: you could use `py` or `python -m` to speify the python in your system*
+
+```
+py -m pip install mcpi-e
 ```
 
 ### Linux / MacOS
 
 ```bash
-sudo pip3 install mcpi
+sudo pip3 install mcpi-e
 ```
+
+## `mcpi-e` Change log
+
+### 1. Enhancement for using `mcpi` in server with multiple users
+
+- User could pass player username as 3rd parameter when create a new Minecraft api instense.
+  
+   ex:
+   `mc=Minecraft.create(address,port,name)`
+
+- Change mc.Player to use entity so it will not pick the first user in the server.
+
+### 2. Limit the Usage of `mcpi`  
+
+- Add the _send command 0.05s interval to slow down the speed
+- limit the useage of setBlocks 
+- todo: limit the script usage range (x,y,z)
 
 ## History
 
