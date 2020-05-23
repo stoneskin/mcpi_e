@@ -1,6 +1,6 @@
 # [For Python Education] Minecraft: Pi edition API Python Library modified version
 
-This project `mcpi-e` is a fork from `mcpi` project [https://github.com/martinohanlon/mcpi]
+This project `mcpi_e` is a fork from `mcpi` project [https://github.com/martinohanlon/mcpi]
 `mcpi` Python library for communicating with [Minecraft: Pi edition](https://minecraft.net/en-us/edition/pi/) and [RaspberryJuice](https://github.com/zhuowei/RaspberryJuice).
 
 I make some change for my students to use in the class lab. 
@@ -10,19 +10,19 @@ I make some change for my students to use in the class lab.
 ### Windows
 
 ```
-pip3 install mcpi-e
+pip3 install mcpi_e
 ```
 
 *Note: you could use `py` or `python -m` to speify the python in your system*
 
 ```
-py -m pip install mcpi-e
+py -m pip install mcpi_e
 ```
 
 ### Linux / MacOS
 
 ```bash
-sudo pip3 install mcpi-e
+sudo pip3 install mcpi_e
 ```
 
 ## `mcpi-e` Change log

@@ -1,17 +1,17 @@
 from setuptools import setup
 
-__project__ = 'mcpi-e'
+__project__ = 'mcpi_e'
 __desc__ = '[for python education] Python library for the Minecraft Pi edition and RaspberryJuice API Modified version'
 __version__ = '0.1'
 __author__ = "stoneskin"
 __author_email__ = 'stoneskin@hotmail.com'
 __license__ = 'MIT'
-__url__ = 'https://github.com/stoneskin/mcpi-e'
+__url__ = 'https://github.com/stoneskin/mcpi_e'
 __long_description__ = """# Minecraft: Pi edition API Python Library
-This project `mcpi-e` is a fork from mcpi project [https://github.com/martinohanlon/mcpi]
-`mcpi-e` Python library for communicating with [Minecraft: Pi edition](https://minecraft.net/en-us/edition/pi/) and [RaspberryJuice](https://github.com/zhuowei/RaspberryJuice).
+This project `mcpi_e` is a fork from mcpi project [https://github.com/martinohanlon/mcpi]
+`mcpi_e` Python library for communicating with [Minecraft: Pi edition](https://minecraft.net/en-us/edition/pi/) and [RaspberryJuice](https://github.com/zhuowei/RaspberryJuice).
 
-Visit [github.com/stoneskin/mcpi-e](https://github.com/stoneskin/mcpi-e) for more information.
+Visit [github.com/stoneskin/mcpi-e](https://github.com/stoneskin/mcpi_e) for more information.
 """
 
 __classifiers__ = [
