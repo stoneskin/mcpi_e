@@ -10,19 +10,28 @@ I make some change for my students to use in the class lab.
 ### Windows
 
 ```
-pip3 install mcpi_e
+pip3 install mcpi-e
 ```
 
 *Note: you could use `py` or `python -m` to speify the python in your system*
 
 ```
-py -m pip install mcpi_e
+py -m pip install mcpi-e
 ```
 
 ### Linux / MacOS
 
 ```bash
-sudo pip3 install mcpi_e
+sudo pip3 install mcpi-e
+```
+
+## Usage
+
+```
+from mcpi_e.minecraft import Minecraft
+...
+mc = Minecraft.create(servername,4711,playerName)
+
 ```
 
 ## `mcpi-e` Change log
