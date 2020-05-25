@@ -7,6 +7,7 @@ __author__ = "stoneskin"
 __author_email__ = 'stoneskin@hotmail.com'
 __license__ = 'MIT'
 __url__ = 'https://github.com/stoneskin/mcpi-e'
+#__download_url__="https://github.com/stoneskin/mcpi-e/archive/0.3.0.tar.gz"
 __long_description__ = """# Minecraft: Pi edition API Python Library
 This project `mcpi-e` is a fork from mcpi project [https://github.com/martinohanlon/mcpi]
 `mcpi-e` Python library for communicating with [Minecraft: Pi edition](https://minecraft.net/en-us/edition/pi/) and [RaspberryJuice](https://github.com/zhuowei/RaspberryJuice).
@@ -17,19 +18,19 @@ Visit [github.com/stoneskin/mcpi-e](https://github.com/stoneskin/mcpi-e) for mor
 ### Windows
 
 ```
-pip3 install mcpi-e
+pip3 install --upgrade mcpi-e
 ```
 
 *Note: you could use `py` or `python -m` to speify the python in your system*
 
 ```
-py -m pip install mcpi-e
+py -m pip install --upgrade mcpi-e
 ```
 
 ### Linux / MacOS
 
 ```bash
-sudo pip3 install mcpi-e
+sudo pip3 install --upgrade mcpi-e
 ```
 
 ## Usage
@@ -84,6 +85,7 @@ setup(name=__project__,
       long_description=__long_description__,
       long_description_content_type='text/markdown',
       url = __url__,
+      #download_url = __download_url__,
       author = __author__,
       author_email = __author_email__,
       license = __license__,

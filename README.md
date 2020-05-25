@@ -10,19 +10,19 @@ I make some change for my students to use in the class lab.
 ### Windows
 
 ```
-pip3 install mcpi-e
+pip3 install --upgrade mcpi-e
 ```
 
 *Note: you could use `py` or `python -m` to speify the python in your system*
 
 ```
-py -m pip install mcpi-e
+py -m pip install --upgrade mcpi-e
 ```
 
 ### Linux / MacOS
 
 ```bash
-sudo pip3 install mcpi-e
+sudo pip3 install --upgrade mcpi-e
 ```
 
 ## Usage
