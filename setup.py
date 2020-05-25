@@ -2,7 +2,7 @@ from setuptools import setup
 
 __project__ = 'mcpi_e'
 __desc__ = '[for python education] Python library for the Minecraft Pi edition and RaspberryJuice API Modified version'
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 __author__ = "stoneskin"
 __author_email__ = 'stoneskin@hotmail.com'
 __license__ = 'MIT'
