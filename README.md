@@ -48,8 +48,9 @@ mc = Minecraft.create(servername,4711,playerName)
 ### 2. Limit the Usage of `mcpi`  
 
 - Add the _send command 0.05s interval to slow down the speed
-- limit the useage of setBlocks 
-- todo: limit the script usage range (x,y,z)
+- limit the useage of setBlocks/setBlock
+  - limit the setBlocks W+H+L < 300  and W*H*L <1000
+  - max abs(y) of the setBlocks/setBlock will be 256
 
 ## History
 

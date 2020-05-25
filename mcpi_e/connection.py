@@ -36,12 +36,43 @@ class Connection:
         The protocol uses CP437 encoding - https://en.wikipedia.org/wiki/Code_page_437
         which is mildly distressing as it can't encode all of Unicode.
         """
-        #print("function called:"+f.decode("utf-8") )
-        if(f!=b"world.setBlocks"): # no send blocks
-            s = b"".join([f, b"(", flatten_parameters_to_bytestring(data), b")", b"\n"])
-            self._send(s)
-        else:
-            print("methods {} not allowed!".format(f.decode("utf-8")))
+        print("function called:"+f.decode("utf-8") ,data)
+   
+        if(f==b"world.setBlock"):
+             if( abs(data[0][1])>256):
+                print("max height of building is 256")
+                return           
+        
+        #verify setblocks
+        if(f==b"world.setBlocks"):
+            print(len(data))
+            print(len(data[0]))
+            print("setblock arg x={} y={} z={} x1={} y1={} z1={} ".format(data[0][0],data[0][1],data[0][2],data[0][3],data[0][4],data[0][5]))
+            if(len(data)<1 or len(data[0])<6):
+                print("setBlocks need a6 input parameters setBlocks(x0,y0,z0,x1,y1,z1,blockId)")
+                return
+         
+            
+            if( abs(data[0][1])>256 or abs(data[0][4])>256):
+                print("max height of building is 256")
+                return
+            h=abs(data[0][1]-data[0][4])
+            w=abs(data[0][0]-data[0][3])
+            l=abs(data[0][2]-data[0][5])
+            length=h+w+l
+            blocksCount=h*w*l
+            print ("set blocks size: h:{}, w:{},l:{}, sum of HWL: {}, total blocks: {} ".format(h,w,l,length,blocksCount))
+         
+            if(length>300 and blocksCount>1000):
+                print("setBlocks failed, Please limit your block size (h+l+w)<300 and h*l*w<1000. (length:{},blocksize:{})".format(str(length),str(blocksCount)))
+                return
+      
+            
+            #print("methods {} not allowed!".format(f.decode("utf-8")))
+            #return
+      
+        s = b"".join([f, b"(", flatten_parameters_to_bytestring(data), b")", b"\n"])
+        self._send(s)     
         
 
     def _send(self, s):
@@ -49,7 +80,7 @@ class Connection:
         The actual socket interaction from self.send, extracted for easier mocking
         and testing
         """
-        time.sleep(0.05) #slow down the running speed
+        time.sleep(0.02) #slow down the running speed
         self.drain()
         self.lastSent = s
 
