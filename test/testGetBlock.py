@@ -5,8 +5,8 @@ from random import *
 
 
 address="192.168.1.155"#if not pass address, it will be localhost
-port=4712 #default port for RaspberryJuice plugin
-name="stoneskinkknn"
+port=4711 #default port for RaspberryJuice plugin 4711
+name="stoneskin"
 #mc = Minecraft.create()
 mc=Minecraft.create(address,port,name)
 

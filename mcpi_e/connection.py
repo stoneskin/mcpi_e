@@ -3,6 +3,8 @@ import select
 import sys
 import time
 from .util import flatten_parameters_to_bytestring
+from .logger import *
+import mcpi_e.settings as settings
 
 """ @author: Aron Nieminen, Mojang AB"""
 
@@ -36,35 +38,35 @@ class Connection:
         The protocol uses CP437 encoding - https://en.wikipedia.org/wiki/Code_page_437
         which is mildly distressing as it can't encode all of Unicode.
         """
-        print("function called:"+f.decode("utf-8") ,data)
+        debug("function called:"+f.decode("utf-8") ,data)
    
         if(f==b"world.setBlock"):
              if( abs(data[0][1])>256):
-                print("max height of building is 256")
+                warn("max height of building is 256")
                 return           
         
         #verify setblocks
         if(f==b"world.setBlocks"):
-            print(len(data))
-            print(len(data[0]))
-            print("setblock arg x={} y={} z={} x1={} y1={} z1={} ".format(data[0][0],data[0][1],data[0][2],data[0][3],data[0][4],data[0][5]))
+            debug(len(data))
+            debug(len(data[0]))
+            debug("setblock arg x={} y={} z={} x1={} y1={} z1={} ".format(data[0][0],data[0][1],data[0][2],data[0][3],data[0][4],data[0][5]))
             if(len(data)<1 or len(data[0])<6):
-                print("setBlocks need a6 input parameters setBlocks(x0,y0,z0,x1,y1,z1,blockId)")
+                warn("setBlocks need a6 input parameters setBlocks(x0,y0,z0,x1,y1,z1,blockId)")
                 return
          
             
             if( abs(data[0][1])>256 or abs(data[0][4])>256):
-                print("max height of building is 256")
+                warn("max height of building is 256")
                 return
             h=abs(data[0][1]-data[0][4])
             w=abs(data[0][0]-data[0][3])
             l=abs(data[0][2]-data[0][5])
             length=h+w+l
             blocksCount=h*w*l
-            print ("set blocks size: h:{}, w:{},l:{}, sum of HWL: {}, total blocks: {} ".format(h,w,l,length,blocksCount))
+            debug("set blocks size: h:{}, w:{},l:{}, sum of HWL: {}, total blocks: {} ".format(h,w,l,length,blocksCount))
          
             if(length>300 and blocksCount>1000):
-                print("setBlocks failed, Please limit your block size (h+l+w)<300 and h*l*w<1000. (length:{},blocksize:{})".format(str(length),str(blocksCount)))
+                warn("setBlocks failed, Please limit your block size (h+l+w)<300 and h*l*w<1000. (length:{},blocksize:{})".format(str(length),str(blocksCount)))
                 return
       
             
@@ -80,7 +82,8 @@ class Connection:
         The actual socket interaction from self.send, extracted for easier mocking
         and testing
         """
-        time.sleep(0.02) #slow down the running speed
+        time.sleep(settings.SYS_SPEED) #slow down the running speed
+        print("sysspeed:",settings.SYS_SPEED)
         self.drain()
         self.lastSent = s
 
@@ -97,3 +100,5 @@ class Connection:
         """Sends and receive data"""
         self.send(*data)
         return self.receive()
+    
+ 

@@ -6,6 +6,9 @@ from .block import Block
 import math
 from .util import flatten
 import sys
+from .logger import *
+import mcpi_e.settings as settings
+
 
 """ Minecraft PI low level api v0.1_1
 
@@ -288,13 +291,14 @@ class Minecraft:
     """The main class to interact with a running instance of Minecraft Pi."""
     def __init__(self, connection,playerId):
         self.conn = connection
-       
+        
         self.camera = CmdCamera(connection)
         self.entity = CmdEntity(connection)
         self.cmdplayer = CmdPlayer(connection,playerId)
         self.player=CmdPlayerEntity(connection,playerId)
         self.events = CmdEvents(connection)
         self.playerId= playerId
+        self.settings=settings
 
     def getBlock(self, *args):
         """Get block (x,y,z) => id:int"""
@@ -385,18 +389,22 @@ class Minecraft:
         """Remove entities all currently loaded Entities by type (typeId:int) => (removedEntitiesCount:int)"""
         return int(self.conn.sendReceive(b"world.removeEntities", typeId))
 
+
     @staticmethod
     def create(address = "localhost", port = 4711,playerName=""):
-        print("Running Python version:"+sys.version)
+        log("Running Python version:"+sys.version)
         conn=Connection(address, port)
         playerId=[]
         if playerName!="":
            playerId= int(conn.sendReceive(b"world.getPlayerId", playerName))
-           print("get {} playerid={}".format(playerName, playerId))
+           log("get {} playerid={}".format(playerName, playerId))
 
         return Minecraft(conn,playerId)
+    
+    
 
-
+#settings
 if __name__ == "__main__":
+    #initSettings()
     mc = Minecraft.create()
     mc.postToChat("Hello, Minecraft!")
