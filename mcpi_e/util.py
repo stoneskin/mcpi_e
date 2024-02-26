@@ -1,4 +1,4 @@
-import collections
+import collections.abc as collections
 
 def flatten(l):
     for e in l:
