@@ -316,7 +316,11 @@ class Minecraft:
 
     def setBlock(self, *args):
         """Set block (x,y,z,id,[data])"""
-        self.conn.send(b"world.setBlock", intFloor(args))
+        if  len(args) > 4:
+            self.conn.send(b"world.setBlocks",
+               intFloor(args[0], args[1], args[2], args[0], args[1], args[2], args[3], args[4]))
+        else:
+            self.conn.send(b"world.setBlock", intFloor(args))
 
     def setBlocks(self, *args):
         """Set a cuboid of blocks (x0,y0,z0,x1,y1,z1,id,[data])"""
