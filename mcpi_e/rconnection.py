@@ -29,5 +29,7 @@ class Rconnection:
         The protocol uses CP437 encoding - https://en.wikipedia.org/wiki/Code_page_437
         which is mildly distressing as it can't encode all of Unicode.
         """
+        print(f"-> sendReceive RCON: {command}")
         result = self.rconn.command(command)
+        print(f"<- sendReceive RCON: {result}")
         return result
