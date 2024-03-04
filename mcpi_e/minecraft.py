@@ -397,8 +397,8 @@ class Minecraft:
 
 
     ### + RCON ADDITIONAL COMMANDS ###
-    def summonCreature(self, x, y, z, creature):
-        return self.rconn.sendReceive(f"/summon {creature} ~{x} ~{y} ~{z}")
+    def summonCreature(self, x, y, z, creature, data = ""):
+        return self.rconn.sendReceive(f"/summon {creature} ~{x} ~{y} ~{z} {data}")
 
 
     ### - RCON ADDITIONAL COMMANDS ###
