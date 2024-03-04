@@ -400,6 +400,55 @@ class Minecraft:
     def summonCreature(self, x, y, z, creature, data = ""):
         return self.rconn.sendReceive(f"/summon {creature} ~{x} ~{y} ~{z} {data}")
 
+    def setTime(self, daytime):
+        return self.rconn.sendReceive(f"/time set {daytime}")
+
+    def stopTime(self, isStopped):
+        if isStopped:
+            return self.rconn.sendReceive(f"/time  doDaylightCycle false")
+        else:
+            return self.rconn.sendReceive(f"/time  doDaylightCycle true")
+
+    def setWeather(self, weather, duration=60*5):
+        return self.rconn.sendReceive(f"/weather {weather} {duration}")
+
+
+    #survival/creative/adventure(0/1/2)
+    def setGamemode(self, whom, gamemode):
+        return self.rconn.sendReceive(f"/gamemode {gamemode} {whom}")
+
+    #peaceful/easy/normal/hard (0,1,2,3)
+    def setDifficulty(self, difficulty):
+        return self.rconn.sendReceive(f"/difficulty {difficulty}")
+
+    def giveItem(self, whom,  item, count=1):
+        return self.rconn.sendReceive(f"/give {whom} {item} {count}")
+
+    def giveItemToMe(self, item, count=1):
+        return self.rconn.sendReceive(f"/give {self.playerId} {item} {count}")
+
+    def teleport(self, x,y,z):
+        return self.rconn.sendReceive(f"/tp {self.playerId} {x} {y} {z}")
+
+    def teleportToMe(self, whom):
+        return self.rconn.sendReceive(f"/tp {whom} {self.playerId}")
+
+    def setWorldspawn(self, x, y, z):
+        return self.rconn.sendReceive(f"/setworldspawn {x} {y} {z}")
+
+    def clearInventory(self, person):
+        return self.rconn.sendReceive(f"/clear {person}")
+
+    def cloneBlocks(self, x1,y1,z1,x2,y2,z2,x,y,z):
+        return self.rconn.sendReceive(f"/clone {x1} {y1} {z1} {x2} {y2} {z2} {x} {y} {z}")
+
+    def setEffect(self, whom, effect, duration=20, power=10):
+        return self.rconn.sendReceive(f"/effect {whom} {effect} {duration} {power}")
+
+    def setEntityData(self, whom, data):
+        return self.rconn.sendReceive(f"/entitydata {whom} {data}")
+
+
 
     ### - RCON ADDITIONAL COMMANDS ###
 
