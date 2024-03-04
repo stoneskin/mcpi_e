@@ -290,7 +290,7 @@ class CmdEvents:
 
 class Minecraft:
     """The main class to interact with a running instance of Minecraft Pi."""
-    def __init__(self, raspberryConnection, rconConnection, playerId):
+    def __init__(self, raspberryConnection, rconConnection, playerId, playerName):
         self.conn = raspberryConnection
         self.rconn = rconConnection
 
@@ -299,7 +299,7 @@ class Minecraft:
         self.cmdplayer = CmdPlayer(raspberryConnection,playerId)
         self.player=CmdPlayerEntity(raspberryConnection,playerId)
         self.events = CmdEvents(raspberryConnection)
-        self.playerId= playerId
+        self.playerName= playerName
         self.settings=settings
 
     def getBlock(self, *args):
@@ -425,13 +425,13 @@ class Minecraft:
         return self.rconn.sendReceive(f"/give {whom} {item} {count}")
 
     def giveItemToMe(self, item, count=1):
-        return self.rconn.sendReceive(f"/give {self.playerId} {item} {count}")
+        return self.rconn.sendReceive(f"/give {self.playerName} {item} {count}")
 
     def teleport(self, x,y,z):
-        return self.rconn.sendReceive(f"/tp {self.playerId} {x} {y} {z}")
+        return self.rconn.sendReceive(f"/tp {self.player} {x} {y} {z}")
 
     def teleportToMe(self, whom):
-        return self.rconn.sendReceive(f"/tp {whom} {self.playerId}")
+        return self.rconn.sendReceive(f"/tp {whom} {self.playerName}")
 
     def setWorldspawn(self, x, y, z):
         return self.rconn.sendReceive(f"/setworldspawn {x} {y} {z}")
@@ -447,9 +447,6 @@ class Minecraft:
 
     def setEntityData(self, whom, data):
         return self.rconn.sendReceive(f"/entitydata {whom} {data}")
-
-
-
     ### - RCON ADDITIONAL COMMANDS ###
 
 
@@ -463,7 +460,7 @@ class Minecraft:
            playerId= int(conn.sendReceive(b"world.getPlayerId", playerName))
            log("get {} playerid={}".format(playerName, playerId))
 
-        return Minecraft(conn,rconn,playerId)
+        return Minecraft(conn,rconn,playerId, playerName)
     
     
 
