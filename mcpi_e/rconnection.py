@@ -20,6 +20,7 @@ class Rconnection:
 
     def __init__(self, address, port, password):
         self.rconn = MCRcon(host=address, port=port, password=password)
+        self.rconn.connect()
         self.lastSent = ""
 
     def sendReceive(self, command):
