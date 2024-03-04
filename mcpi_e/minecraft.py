@@ -428,7 +428,7 @@ class Minecraft:
         return self.rconn.sendReceive(f"/give {self.playerName} {item} {count}")
 
     def teleport(self, x,y,z):
-        return self.rconn.sendReceive(f"/tp {self.player} {x} {y} {z}")
+        return self.rconn.sendReceive(f"/tp {self.playerName} {x} {y} {z}")
 
     def teleportToMe(self, whom):
         return self.rconn.sendReceive(f"/tp {whom} {self.playerName}")
