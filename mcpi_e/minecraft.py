@@ -1,3 +1,4 @@
+from mcpi_e.rconnection import Rconnection
 from .connection import Connection
 from .vec3 import Vec3
 from .event import BlockEvent, ChatEvent, ProjectileEvent
@@ -289,14 +290,15 @@ class CmdEvents:
 
 class Minecraft:
     """The main class to interact with a running instance of Minecraft Pi."""
-    def __init__(self, connection,playerId):
-        self.conn = connection
-        
-        self.camera = CmdCamera(connection)
-        self.entity = CmdEntity(connection)
-        self.cmdplayer = CmdPlayer(connection,playerId)
-        self.player=CmdPlayerEntity(connection,playerId)
-        self.events = CmdEvents(connection)
+    def __init__(self, raspberryConnection, rconConnection, playerId):
+        self.conn = raspberryConnection
+        self.rconn = rconConnection
+
+        self.camera = CmdCamera(raspberryConnection)
+        self.entity = CmdEntity(raspberryConnection)
+        self.cmdplayer = CmdPlayer(raspberryConnection,playerId)
+        self.player=CmdPlayerEntity(raspberryConnection,playerId)
+        self.events = CmdEvents(raspberryConnection)
         self.playerId= playerId
         self.settings=settings
 
@@ -394,16 +396,25 @@ class Minecraft:
         return int(self.conn.sendReceive(b"world.removeEntities", typeId))
 
 
+    ### + RCON ADDITIONAL COMMANDS ###
+    def summonCreature(self, x, y, z, creature):
+        return self.rconn.sendReceive(f"/summon {creature} ~{x} ~{y} ~{z}")
+
+
+    ### - RCON ADDITIONAL COMMANDS ###
+
+
     @staticmethod
-    def create(address = "localhost", port = 4711,playerName=""):
+    def create(address = "localhost", rasberryPort = 4711, rconPort = 8711, rconPassword=47118711 ,playerName=""):
         log("Running Python version:"+sys.version)
-        conn=Connection(address, port)
+        conn=Connection(address, rasberryPort)
+        rconn=Rconnection(address, rconPort, rconPassword)
         playerId=[]
         if playerName!="":
            playerId= int(conn.sendReceive(b"world.getPlayerId", playerName))
            log("get {} playerid={}".format(playerName, playerId))
 
-        return Minecraft(conn,playerId)
+        return Minecraft(conn,rconn,playerId)
     
     
 
