@@ -426,7 +426,7 @@ class Minecraft:
         # print "x = " + str(x) + ", y = " + str(y) + ", z = " + str(z)
 
     # draws a face, when passed a collection of vertices which make up a polyhedron
-    def drawFace(self, vertices, filled, blockType, blockData=0):
+    def drawFigure(self, vertices, filled, blockType, blockData=0):
         # get the edges of the face
         edgesVertices = []
         # persist first vertex
