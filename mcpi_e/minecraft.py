@@ -426,7 +426,7 @@ class Minecraft:
         # print "x = " + str(x) + ", y = " + str(y) + ", z = " + str(z)
 
     # draws a face, when passed a collection of vertices which make up a polyhedron
-    def drawFigure(self, vertices, filled, blockType, blockData=0):
+    def drawFace(self, vertices, filled, blockType, blockData=0):
         # get the edges of the face
         edgesVertices = []
         # persist first vertex
@@ -665,9 +665,9 @@ class Minecraft:
 
     def stopTime(self, isStopped):
         if isStopped:
-            return self.rconn.sendReceive(f"/time  doDaylightCycle false")
+            return self.rconn.sendReceive(f"/gamerule doDaylightCycle false")
         else:
-            return self.rconn.sendReceive(f"/time  doDaylightCycle true")
+            return self.rconn.sendReceive(f"/gamerule doDaylightCycle true")
 
     def setWeather(self, weather, duration=60 * 5):
         return self.rconn.sendReceive(f"/weather {weather} {duration}")
