@@ -31,6 +31,7 @@ class Rconnection:
         which is mildly distressing as it can't encode all of Unicode.
         """
         print(f"-> sendReceive RCON: {command}")
+        time.sleep(3)
         result = self.rconn.command(command)
         print(f"<- sendReceive RCON: {result}")
         return result
