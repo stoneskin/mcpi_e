@@ -1,3 +1,5 @@
+import time
+
 from mcpi_e.rconnection import Rconnection
 from .connection import Connection
 from .vec3 import Vec3
@@ -658,6 +660,7 @@ class Minecraft:
 
     ### + RCON ADDITIONAL COMMANDS ###
     def summonCreature(self, x, y, z, creature, data=""):
+        time.sleep(15)
         return self.rconn.sendReceive(f"/summon {creature} ~{x} ~{y} ~{z} {data}")
 
     def setTime(self, daytime):
