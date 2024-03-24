@@ -1,7 +1,7 @@
 class Entity:
     '''Minecraft PI entity description. Can be sent to Minecraft.spawnEntity'''
 
-    def __init__(self, id, name = None):
+    def __init__(self, id, name=None):
         self.id = id
         self.name = name
 
@@ -19,7 +19,8 @@ class Entity:
         return iter((self.id,))
 
     def __repr__(self):
-        return 'Entity(%d)'%(self.id)
+        return 'Entity(%d)' % (self.id)
+
 
 EXPERIENCE_ORB = Entity(2, "EXPERIENCE_ORB")
 AREA_EFFECT_CLOUD = Entity(3, "AREA_EFFECT_CLOUD")

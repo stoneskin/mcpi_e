@@ -1,3 +1,6 @@
+import time
+
+from mcpi_e.rconnection import Rconnection
 from .connection import Connection
 from .vec3 import Vec3
 from .event import BlockEvent, ChatEvent, ProjectileEvent
@@ -8,7 +11,6 @@ from .util import flatten
 import sys
 from .logger import *
 import mcpi_e.settings as settings
-
 
 """ Minecraft PI low level api v0.1_1
 
@@ -36,11 +38,14 @@ import mcpi_e.settings as settings
 - removeEntityType()
 """
 
+
 def intFloor(*args):
     return [int(math.floor(x)) for x in flatten(args)]
 
+
 class CmdPositioner:
     """Methods for setting and getting positions"""
+
     def __init__(self, connection, packagePrefix):
         self.conn = connection
         self.pkg = packagePrefix
@@ -92,11 +97,13 @@ class CmdPositioner:
         """Set a player setting (setting, status). keys: autojump"""
         self.conn.send(self.pkg + b".setting", setting, 1 if bool(status) else 0)
 
+
 class CmdEntity(CmdPositioner):
     """Methods for entities"""
+
     def __init__(self, connection):
         CmdPositioner.__init__(self, connection, b"entity")
-    
+
     def getName(self, id):
         """Get the list name of the player with entity id => [name:str]
         
@@ -108,7 +115,8 @@ class CmdEntity(CmdPositioner):
         """If distanceFromPlayerInBlocks:int is not specified then default 10 blocks will be used"""
         s = self.conn.sendReceive(b"entity.getEntities", id, distance, typeId)
         entities = [e for e in s.split("|") if e]
-        return [ [int(n.split(",")[0]), int(n.split(",")[1]), n.split(",")[2], float(n.split(",")[3]), float(n.split(",")[4]), float(n.split(",")[5])] for n in entities]
+        return [[int(n.split(",")[0]), int(n.split(",")[1]), n.split(",")[2], float(n.split(",")[3]),
+                 float(n.split(",")[4]), float(n.split(",")[5])] for n in entities]
 
     def removeEntities(self, id, distance=10, typeId=-1):
         """Remove entities all entities near entity (playerEntityId:int, distanceFromPlayerInBlocks:int, typeId:int, ) => (removedEntitiesCount:int)"""
@@ -126,7 +134,7 @@ class CmdEntity(CmdPositioner):
         s = self.conn.sendReceive(b"entity.events.chat.posts", intFloor(args))
         events = [e for e in s.split("|") if e]
         return [ChatEvent.Post(int(e[:e.find(",")]), e[e.find(",") + 1:]) for e in events]
-    
+
     def pollProjectileHits(self, *args):
         """Only triggered by projectiles => [BlockEvent]"""
         s = self.conn.sendReceive(b"entity.events.projectile.hits", intFloor(args))
@@ -135,10 +143,10 @@ class CmdEntity(CmdPositioner):
         for e in events:
             info = e.split(",")
             results.append(ProjectileEvent.Hit(
-                int(info[0]), 
-                int(info[1]), 
-                int(info[2]), 
-                int(info[3]), 
+                int(info[0]),
+                int(info[1]),
+                int(info[2]),
+                int(info[3]),
                 info[4],
                 info[5]))
         return results
@@ -147,31 +155,42 @@ class CmdEntity(CmdPositioner):
         """Clear the entities events"""
         self.conn.send(b"entity.events.clear", intFloor(args))
 
+
 class CmdPlayer(CmdPositioner):
     """Methods for the host (Raspberry Pi) player"""
-    def __init__(self, connection,playerId):
-        CmdPositioner.__init__(self, connection,  b"player")
+
+    def __init__(self, connection, playerId):
+        CmdPositioner.__init__(self, connection, b"player")
         self.conn = connection
-        self.playerId=playerId
+        self.playerId = playerId
 
     def getPos(self):
         return CmdPositioner.getPos(self, self.playerId)
+
     def setPos(self, *args):
         return CmdPositioner.setPos(self, self.playerId, args)
+
     def getTilePos(self):
         return CmdPositioner.getTilePos(self, self.playerId)
+
     def setTilePos(self, *args):
         return CmdPositioner.setTilePos(self, self.playerId, args)
+
     def setDirection(self, *args):
         return CmdPositioner.setDirection(self, self.playerId, args)
+
     def getDirection(self):
         return CmdPositioner.getDirection(self, self.playerId)
+
     def setRotation(self, yaw):
-        return CmdPositioner.setRotation(self,self.playerId, yaw)
+        return CmdPositioner.setRotation(self, self.playerId, yaw)
+
     def getRotation(self):
         return CmdPositioner.getRotation(self, self.playerId)
+
     def setPitch(self, pitch):
         return CmdPositioner.setPitch(self, self.playerId, pitch)
+
     def getPitch(self):
         return CmdPositioner.getPitch(self, self.playerId)
 
@@ -180,7 +199,8 @@ class CmdPlayer(CmdPositioner):
         """If distanceFromPlayerInBlocks:int is not specified then default 10 blocks will be used"""
         s = self.conn.sendReceive(b"player.getEntities", distance, typeId)
         entities = [e for e in s.split("|") if e]
-        return [ [int(n.split(",")[0]), int(n.split(",")[1]), n.split(",")[2], float(n.split(",")[3]), float(n.split(",")[4]), float(n.split(",")[5])] for n in entities]
+        return [[int(n.split(",")[0]), int(n.split(",")[1]), n.split(",")[2], float(n.split(",")[3]),
+                 float(n.split(",")[4]), float(n.split(",")[5])] for n in entities]
 
     def removeEntities(self, distance=10, typeId=-1):
         """Remove entities all entities near entity (distanceFromPlayerInBlocks:int, typeId:int, ) => (removedEntitiesCount:int)"""
@@ -198,7 +218,7 @@ class CmdPlayer(CmdPositioner):
         s = self.conn.sendReceive(b"player.events.chat.posts")
         events = [e for e in s.split("|") if e]
         return [ChatEvent.Post(int(e[:e.find(",")]), e[e.find(",") + 1:]) for e in events]
-    
+
     def pollProjectileHits(self):
         """Only triggered by projectiles => [BlockEvent]"""
         s = self.conn.sendReceive(b"player.events.projectile.hits")
@@ -207,10 +227,10 @@ class CmdPlayer(CmdPositioner):
         for e in events:
             info = e.split(",")
             results.append(ProjectileEvent.Hit(
-                int(info[0]), 
-                int(info[1]), 
-                int(info[2]), 
-                int(info[3]), 
+                int(info[0]),
+                int(info[1]),
+                int(info[2]),
+                int(info[3]),
                 info[4],
                 info[5]))
         return results
@@ -219,15 +239,18 @@ class CmdPlayer(CmdPositioner):
         """Clear the players events"""
         self.conn.send(b"player.events.clear")
 
+
 class CmdPlayerEntity(CmdPlayer):
     """ use entity to build a player """
-    def __init__(self, connection,playerId):
-        CmdPositioner.__init__(self, connection,  b"entity")
+
+    def __init__(self, connection, playerId):
+        CmdPositioner.__init__(self, connection, b"entity")
         self.conn = connection
-        self.playerId=playerId
-        
+        self.playerId = playerId
+
     def getPos(self):
-            return CmdPositioner.getPos(self, self.playerId)
+        return CmdPositioner.getPos(self, self.playerId)
+
 
 class CmdCamera:
     def __init__(self, connection):
@@ -252,6 +275,7 @@ class CmdCamera:
 
 class CmdEvents:
     """Events"""
+
     def __init__(self, connection):
         self.conn = connection
 
@@ -270,7 +294,7 @@ class CmdEvents:
         s = self.conn.sendReceive(b"events.chat.posts")
         events = [e for e in s.split("|") if e]
         return [ChatEvent.Post(int(e[:e.find(",")]), e[e.find(",") + 1:]) for e in events]
-    
+
     def pollProjectileHits(self):
         """Only triggered by projectiles => [BlockEvent]"""
         s = self.conn.sendReceive(b"events.projectile.hits")
@@ -279,26 +303,29 @@ class CmdEvents:
         for e in events:
             info = e.split(",")
             results.append(ProjectileEvent.Hit(
-                int(info[0]), 
-                int(info[1]), 
-                int(info[2]), 
-                int(info[3]), 
+                int(info[0]),
+                int(info[1]),
+                int(info[2]),
+                int(info[3]),
                 info[4],
                 info[5]))
         return results
 
+
 class Minecraft:
     """The main class to interact with a running instance of Minecraft Pi."""
-    def __init__(self, connection,playerId):
-        self.conn = connection
-        
-        self.camera = CmdCamera(connection)
-        self.entity = CmdEntity(connection)
-        self.cmdplayer = CmdPlayer(connection,playerId)
-        self.player=CmdPlayerEntity(connection,playerId)
-        self.events = CmdEvents(connection)
-        self.playerId= playerId
-        self.settings=settings
+
+    def __init__(self, raspberryConnection, rconConnection, playerId, playerName):
+        self.conn = raspberryConnection
+        self.rconn = rconConnection
+
+        self.camera = CmdCamera(raspberryConnection)
+        self.entity = CmdEntity(raspberryConnection)
+        self.cmdplayer = CmdPlayer(raspberryConnection, playerId)
+        self.player = CmdPlayerEntity(raspberryConnection, playerId)
+        self.events = CmdEvents(raspberryConnection)
+        self.playerName = playerName
+        self.settings = settings
 
     def getBlock(self, *args):
         """Get block (x,y,z) => id:int"""
@@ -316,7 +343,11 @@ class Minecraft:
 
     def setBlock(self, *args):
         """Set block (x,y,z,id,[data])"""
-        self.conn.send(b"world.setBlock", intFloor(args))
+        if len(args) > 4:
+            self.conn.send(b"world.setBlocks",
+                           intFloor(args[0], args[1], args[2], args[0], args[1], args[2], args[3], args[4]))
+        else:
+            self.conn.send(b"world.setBlock", intFloor(args))
 
     def setBlocks(self, *args):
         """Set a cuboid of blocks (x0,y0,z0,x1,y1,z1,id,[data])"""
@@ -333,8 +364,8 @@ class Minecraft:
         for arg in flatten(args):
             flatargs.append(arg)
         for flatarg in flatargs[5:]:
-            lines.append(flatarg.replace(",",";").replace(")","]").replace("(","["))
-        self.conn.send(b"world.setSign",intFloor(flatargs[0:5]) + lines)
+            lines.append(flatarg.replace(",", ";").replace(")", "]").replace("(", "["))
+        self.conn.send(b"world.setSign", intFloor(flatargs[0:5]) + lines)
 
     def spawnEntity(self, *args):
         """Spawn entity (x,y,z,id)"""
@@ -370,16 +401,17 @@ class Minecraft:
         self.conn.send(b"world.setting", setting, 1 if bool(status) else 0)
 
     def getEntityTypes(self):
-        """Return a list of Entity objects representing all the entity types in Minecraft"""  
+        """Return a list of Entity objects representing all the entity types in Minecraft"""
         s = self.conn.sendReceive(b"world.getEntityTypes")
         types = [t for t in s.split("|") if t]
         return [Entity(int(e[:e.find(",")]), e[e.find(",") + 1:]) for e in types]
-    
+
     def getEntities(self, typeId=-1):
         """Return a list of all currently loaded entities (EntityType:int) => [[entityId:int,entityTypeId:int,entityTypeName:str,posX:float,posY:float,posZ:float]]"""
         s = self.conn.sendReceive(b"world.getEntities", typeId)
         entities = [e for e in s.split("|") if e]
-        return [[int(n.split(",")[0]), int(n.split(",")[1]), n.split(",")[2], float(n.split(",")[3]), float(n.split(",")[4]), float(n.split(",")[5])] for n in entities]
+        return [[int(n.split(",")[0]), int(n.split(",")[1]), n.split(",")[2], float(n.split(",")[3]),
+                 float(n.split(",")[4]), float(n.split(",")[5])] for n in entities]
 
     def removeEntity(self, id):
         """Remove entity by id (entityId:int) => (removedEntitiesCount:int)"""
@@ -389,22 +421,318 @@ class Minecraft:
         """Remove entities all currently loaded Entities by type (typeId:int) => (removedEntitiesCount:int)"""
         return int(self.conn.sendReceive(b"world.removeEntities", typeId))
 
+    ### + DRAWING ADDITIONAL COMMANDS ###
+    # draw point
+    def drawPoint3d(self, x, y, z, blockType, blockData=0):
+        self.setBlock(x, y, z, blockType, blockData)
+        # print "x = " + str(x) + ", y = " + str(y) + ", z = " + str(z)
+
+    # draws a face, when passed a collection of vertices which make up a polyhedron
+    def drawFigure(self, vertices, filled, blockType, blockData=0):
+        # get the edges of the face
+        edgesVertices = []
+        # persist first vertex
+        firstVertex = vertices[0]
+        # get last vertex
+        lastVertex = vertices[0]
+        # loop through vertices and get edges
+        for vertex in vertices[1:]:
+            # got 2 vertices, get the points for the edge
+            edgesVertices = edgesVertices + self.getLine(lastVertex.x, lastVertex.y, lastVertex.z, vertex.x, vertex.y,
+                                                         vertex.z)
+            # persist the last vertex found
+            lastVertex = vertex
+        # get edge between the last and first vertices
+        edgesVertices = edgesVertices + self.getLine(lastVertex.x, lastVertex.y, lastVertex.z, firstVertex.x,
+                                                     firstVertex.y, firstVertex.z)
+
+        if (filled):
+            # draw solid face
+            # sort edges vertices
+            def keyX(point):
+                return point.x
+
+            def keyY(point):
+                return point.y
+
+            def keyZ(point):
+                return point.z
+
+            edgesVertices.sort(key=keyZ)
+            edgesVertices.sort(key=keyY)
+            edgesVertices.sort(key=keyX)
+
+            # draw lines between the points on the edges
+            # this algorithm isnt very efficient, but it does always fill the gap
+            lastVertex = edgesVertices[0]
+            for vertex in edgesVertices[1:]:
+                # got 2 vertices, draw lines between them
+                self.drawLine(lastVertex.x, lastVertex.y, lastVertex.z, vertex.x, vertex.y, vertex.z, blockType,
+                              blockData)
+                # print "x = " + str(lastVertex.x) + ", y = " + str(lastVertex.y) + ", z = " + str(lastVertex.z) + " x2 = " + str(vertex.x) + ", y2 = " + str(vertex.y) + ", z2 = " + str(vertex.z)
+                # persist the last vertex found
+                lastVertex = vertex
+
+        else:
+            # draw wireframe
+            self.drawVertices(edgesVertices, blockType, blockData)
+
+    # draw's all the points in a collection of vertices with a block
+    def drawVertices(self, vertices, blockType, blockData=0):
+        for vertex in vertices:
+            self.drawPoint3d(vertex.x, vertex.y, vertex.z, blockType, blockData)
+
+    # draw line
+    def drawLine(self, x1, y1, z1, x2, y2, z2, blockType, blockData=0):
+        self.drawVertices(self.getLine(x1, y1, z1, x2, y2, z2), blockType, blockData)
+
+    # draw sphere
+    def drawSphere(self, x1, y1, z1, radius, blockType, blockData=0):
+        # create sphere
+        for x in range(radius * -1, radius):
+            for y in range(radius * -1, radius):
+                for z in range(radius * -1, radius):
+                    if x ** 2 + y ** 2 + z ** 2 < radius ** 2:
+                        self.drawPoint3d(x1 + x, y1 + y, z1 + z, blockType, blockData)
+
+    # draw a verticle circle
+    def drawCircle(self, x0, y0, z, radius, blockType, blockData=0):
+        f = 1 - radius
+        ddf_x = 1
+        ddf_y = -2 * radius
+        x = 0
+        y = radius
+        self.drawPoint3d(x0, y0 + radius, z, blockType, blockData)
+        self.drawPoint3d(x0, y0 - radius, z, blockType, blockData)
+        self.drawPoint3d(x0 + radius, y0, z, blockType, blockData)
+        self.drawPoint3d(x0 - radius, y0, z, blockType, blockData)
+
+        while x < y:
+            if f >= 0:
+                y -= 1
+                ddf_y += 2
+                f += ddf_y
+            x += 1
+            ddf_x += 2
+            f += ddf_x
+            self.drawPoint3d(x0 + x, y0 + y, z, blockType, blockData)
+            self.drawPoint3d(x0 - x, y0 + y, z, blockType, blockData)
+            self.drawPoint3d(x0 + x, y0 - y, z, blockType, blockData)
+            self.drawPoint3d(x0 - x, y0 - y, z, blockType, blockData)
+            self.drawPoint3d(x0 + y, y0 + x, z, blockType, blockData)
+            self.drawPoint3d(x0 - y, y0 + x, z, blockType, blockData)
+            self.drawPoint3d(x0 + y, y0 - x, z, blockType, blockData)
+            self.drawPoint3d(x0 - y, y0 - x, z, blockType, blockData)
+
+    # draw a horizontal circle
+    def drawHorizontalCircle(self, x0, y, z0, radius, blockType, blockData=0):
+        f = 1 - radius
+        ddf_x = 1
+        ddf_z = -2 * radius
+        x = 0
+        z = radius
+        self.drawPoint3d(x0, y, z0 + radius, blockType, blockData)
+        self.drawPoint3d(x0, y, z0 - radius, blockType, blockData)
+        self.drawPoint3d(x0 + radius, y, z0, blockType, blockData)
+        self.drawPoint3d(x0 - radius, y, z0, blockType, blockData)
+
+        while x < z:
+            if f >= 0:
+                z -= 1
+                ddf_z += 2
+                f += ddf_z
+            x += 1
+            ddf_x += 2
+            f += ddf_x
+            self.drawPoint3d(x0 + x, y, z0 + z, blockType, blockData)
+            self.drawPoint3d(x0 - x, y, z0 + z, blockType, blockData)
+            self.drawPoint3d(x0 + x, y, z0 - z, blockType, blockData)
+            self.drawPoint3d(x0 - x, y, z0 - z, blockType, blockData)
+            self.drawPoint3d(x0 + z, y, z0 + x, blockType, blockData)
+            self.drawPoint3d(x0 - z, y, z0 + x, blockType, blockData)
+            self.drawPoint3d(x0 + z, y, z0 - x, blockType, blockData)
+            self.drawPoint3d(x0 - z, y, z0 - x, blockType, blockData)
+
+    # returns points on a line
+    # 3d implementation of bresenham line algorithm
+    def getLine(self, x1, y1, z1, x2, y2, z2):
+
+        # return maximum of 2 values
+        def MAX(a, b):
+            if a > b:
+                return a
+            else:
+                return b
+
+        # return step
+        def ZSGN(a):
+            if a < 0:
+                return -1
+            elif a > 0:
+                return 1
+            elif a == 0:
+                return 0
+
+        # list for vertices
+        vertices = []
+
+        # if the 2 points are the same, return single vertice
+        if (x1 == x2 and y1 == y2 and z1 == z2):
+            vertices.append(Vec3(x1, y1, z1))
+
+        # else get all points in edge
+        else:
+
+            dx = x2 - x1
+            dy = y2 - y1
+            dz = z2 - z1
+
+            ax = abs(dx) << 1
+            ay = abs(dy) << 1
+            az = abs(dz) << 1
+
+            sx = ZSGN(dx)
+            sy = ZSGN(dy)
+            sz = ZSGN(dz)
+
+            x = x1
+            y = y1
+            z = z1
+
+            # x dominant
+            if (ax >= MAX(ay, az)):
+                yd = ay - (ax >> 1)
+                zd = az - (ax >> 1)
+                loop = True
+                while (loop):
+                    vertices.append(Vec3(x, y, z))
+                    if (x == x2):
+                        loop = False
+                    if (yd >= 0):
+                        y += sy
+                        yd -= ax
+                    if (zd >= 0):
+                        z += sz
+                        zd -= ax
+                    x += sx
+                    yd += ay
+                    zd += az
+            # y dominant
+            elif (ay >= MAX(ax, az)):
+                xd = ax - (ay >> 1)
+                zd = az - (ay >> 1)
+                loop = True
+                while (loop):
+                    vertices.append(Vec3(x, y, z))
+                    if (y == y2):
+                        loop = False
+                    if (xd >= 0):
+                        x += sx
+                        xd -= ay
+                    if (zd >= 0):
+                        z += sz
+                        zd -= ay
+                    y += sy
+                    xd += ax
+                    zd += az
+            # z dominant
+            elif (az >= MAX(ax, ay)):
+                xd = ax - (az >> 1)
+                yd = ay - (az >> 1)
+                loop = True
+                while (loop):
+                    vertices.append(Vec3(x, y, z))
+                    if (z == z2):
+                        loop = False
+                    if (xd >= 0):
+                        x += sx
+                        xd -= az
+                    if (yd >= 0):
+                        y += sy
+                        yd -= az
+                    z += sz
+                    xd += ax
+                    yd += ay
+
+        return vertices
+
+    ### - DRAWING ADDITIONAL COMMANDS ###
+
+    ### + RCON ADDITIONAL COMMANDS ###
+    def spawnCreature(self, x, y, z, creature, data=""):
+        time.sleep(2)
+        return self.rconn.sendReceive(f"/summon {creature} ~{x} ~{y} ~{z} {data}")
+
+    def kill(self, whom):
+        return self.rconn.sendReceive(f"/kill {whom}")
+
+    def setTime(self, daytime):
+        return self.rconn.sendReceive(f"/time set {daytime}")
+
+    def stopTime(self, isStopped):
+        if isStopped:
+            return self.rconn.sendReceive(f"/gamerule doDaylightCycle false")
+        else:
+            return self.rconn.sendReceive(f"/gamerule doDaylightCycle true")
+
+    def setWeather(self, weather, duration=60 * 5):
+        return self.rconn.sendReceive(f"/weather {weather} {duration}")
+
+    # survival/creative/adventure(0/1/2)
+    def setGamemode(self, whom, gamemode):
+        return self.rconn.sendReceive(f"/gamemode {gamemode} {whom}")
+
+    # peaceful/easy/normal/hard (0,1,2,3)
+    def setDifficulty(self, difficulty):
+        return self.rconn.sendReceive(f"/difficulty {difficulty}")
+
+    def giveItem(self, whom, item, count=1):
+        return self.rconn.sendReceive(f"/give {whom} {item} {count}")
+
+    def giveItemToMe(self, item, count=1):
+        return self.rconn.sendReceive(f"/give {self.playerName} {item} {count}")
+
+    def teleport(self, whom, x, y, z):
+        return self.rconn.sendReceive(f"/tp {whom} {x} {y} {z}")
+
+    def teleportMe(self, x, y, z):
+        return self.rconn.sendReceive(f"/tp {self.playerName} {x} {y} {z}")
+
+    def teleportToMe(self, whom):
+        return self.rconn.sendReceive(f"/tp {whom} {self.playerName}")
+
+    def setWorldspawn(self, x, y, z):
+        return self.rconn.sendReceive(f"/setworldspawn {x} {y} {z}")
+
+    def clearInventory(self, person):
+        return self.rconn.sendReceive(f"/clear {person}")
+
+    def cloneBlocks(self, x1, y1, z1, x2, y2, z2, x, y, z):
+        return self.rconn.sendReceive(f"/clone {x1} {y1} {z1} {x2} {y2} {z2} {x} {y} {z}")
+
+    def setEffect(self, whom, effect, duration=20, power=10):
+        return self.rconn.sendReceive(f"/effect {whom} {effect} {duration} {power}")
+
+    def setEntityData(self, whom, data):
+        return self.rconn.sendReceive(f"/entitydata {whom} {data}")
+
+    ### - RCON ADDITIONAL COMMANDS ###
 
     @staticmethod
-    def create(address = "localhost", port = 4711,playerName=""):
-        log("Running Python version:"+sys.version)
-        conn=Connection(address, port)
-        playerId=[]
-        if playerName!="":
-           playerId= int(conn.sendReceive(b"world.getPlayerId", playerName))
-           log("get {} playerid={}".format(playerName, playerId))
+    def create(address="localhost", rasberryPort=4711, rconPort=8711, rconPassword=47118711, playerName=""):
+        log("Running Python version:" + sys.version)
+        conn = Connection(address, rasberryPort)
+        rconn = Rconnection(address, rconPort, rconPassword)
+        playerId = []
+        if playerName != "":
+            playerId = int(conn.sendReceive(b"world.getPlayerId", playerName))
+            log("get {} playerid={}".format(playerName, playerId))
 
-        return Minecraft(conn,playerId)
-    
-    
+        return Minecraft(conn, rconn, playerId, playerName)
 
-#settings
+
+# settings
 if __name__ == "__main__":
-    #initSettings()
+    # initSettings()
     mc = Minecraft.create()
     mc.postToChat("Hello, Minecraft!")
