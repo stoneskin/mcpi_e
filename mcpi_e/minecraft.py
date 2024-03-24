@@ -660,8 +660,11 @@ class Minecraft:
 
     ### + RCON ADDITIONAL COMMANDS ###
     def spawnCreature(self, x, y, z, creature, data=""):
-        time.sleep(15)
+        time.sleep(2)
         return self.rconn.sendReceive(f"/summon {creature} ~{x} ~{y} ~{z} {data}")
+
+    def kill(self, whom):
+        return self.rconn.sendReceive(f"/kill {whom}")
 
     def setTime(self, daytime):
         return self.rconn.sendReceive(f"/time set {daytime}")
