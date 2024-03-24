@@ -659,7 +659,7 @@ class Minecraft:
     ### - DRAWING ADDITIONAL COMMANDS ###
 
     ### + RCON ADDITIONAL COMMANDS ###
-    def summonCreature(self, x, y, z, creature, data=""):
+    def spawnCreature(self, x, y, z, creature, data=""):
         time.sleep(15)
         return self.rconn.sendReceive(f"/summon {creature} ~{x} ~{y} ~{z} {data}")
 
